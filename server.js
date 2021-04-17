@@ -8,8 +8,10 @@ const mqttRouter = require("./routes/mqtt.js");
 
 app.listen(PORT, () => console.log(`Server is listening on port ${PORT}...`));
 
-app.use("/public", express.static("public"));
-
 app.use("/database", databaseRouter);
 
-app.use("/mqtt", databaseRouter);
+app.use("/mqtt", mqttRouter);
+
+app.use("/public", express.static("public"));
+
+app.use(express.json());
