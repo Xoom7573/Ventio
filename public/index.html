@@ -1,17 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="./index.css" />
-        <title>Document</title>
-    </head>
-    <body>
-        <div class="center">
-            <h1>hallo</h1>
-            <h2>kinker</h2>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="./style.css">
+    <title>test chart</title>
+</head>
+<body>
+    <!-- <style>
+    .main {
+        width: 100vw; /*set the size of container*/
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .c1,.c2,.c3 {
+        max-width: 500px; /*set max width of item*/
+        min-width: 200px; /*set min width of item*/
+        height: 150px;
+        box-sizing: border-box;
+        margin: 2rem;
+        flex: 1;
+    }
+    </style> -->
+    <div class="main">
+        <div class="c3">
+            <canvas class="myChartTEMP" id="myChartTEMP"></canvas>
         </div>
-        <script src="./index.js"></script>
-    </body>
+        <div class="c2">
+            <canvas class="myChartRPM" id="myChartRPM"></canvas>
+        </div>
+        <div class="c1">
+            <canvas class="myMultiChart" id="myMultiChart"></canvas>
+        </div>
+    </div>
+    <script src="./index.js"></script>
+</body>
 </html>

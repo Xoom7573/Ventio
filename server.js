@@ -8,7 +8,7 @@ const databaseRouter = require("./routes/api");
 
 // SIMPLE AUTH
 const AUTH_KEY = "SECRETBOJELLEBENJIGIP6TEA";
-let AUTH = false;
+let AUTH = true;
 
 app.listen(PORT, () => console.log(`Server is listening on port ${PORT}...`));
 

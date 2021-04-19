@@ -15,9 +15,14 @@ let currentState = {};
 
 /* ---------- GLOBAL API ROUTES ---------- */
 router.get("/currentState", (req, res) => {
+  let date = new Date();
   let reply = {
     Status: "Succes",
-    res: currentState,
+    res: {
+      id: ID,
+      time: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
+      state: currentState,
+    },
   };
   res.send(reply);
 });
@@ -150,12 +155,7 @@ client.on("message", (topic, message) => {
   let msg = message.toString();
   if (topic === "dragino-1e9d94/LoraModule") {
     let s = msg.slice(1, -1);
-    let date = new Date();
-    currentState = {
-      id: ID,
-      time: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
-      data: JSON.parse(s),
-    };
+    currentState = JSON.parse(s);
   } else {
     console.log(`Received msg: ${msg} from ${topic}`);
   }
@@ -180,9 +180,9 @@ function getLatest(t) {
   }
   return arr;
 }
-
+//{"id":24,"time":"21:36:44","data":{"id":23,"time":"21:36:38","data":{"timestamp":"2021-04-19T19:36:37","rssi":"-114","motor":0,"rpm":459,"temp":15,"Ampere":5}},"_id":"aISxlJ8vVwanqg9o"}
 function saveState() {
-  if (currentState.id != undefined) {
+  if (currentState.motor != undefined) {
     let date = new Date();
     ID += 1;
     let doc = {
@@ -199,7 +199,7 @@ function saveState() {
 }
 
 /* ---------- CUSTOM ACTIONS ---------- */
-setInterval(saveState, 60 * 1000);
+setInterval(saveState, 10 * 1000);
 
 //setInterval(() => console.log(currentState), 1000);
 
