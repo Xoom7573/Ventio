@@ -1,0 +1,5 @@
+{"id":0,"time":"20:3:43","data":{"id":-1,"time":"20:3:41","data":{"timestamp":"2021-04-19T18:03:40","rssi":"-106","motor":0,"rpm":459,"temp":15,"Ampere":4}},"_id":"1YlThe5In1jTmEw4"}
+{"id":1,"time":"20:5:1","data":{"id":0,"time":"20:4:59","data":{"timestamp":"2021-04-19T18:04:58","rssi":"-107","motor":0,"rpm":459,"temp":15,"Ampere":4}},"_id":"cPPsWwxVvcHV3LwF"}
+{"id":2,"time":"20:6:1","data":{"id":1,"time":"20:5:58","data":{"timestamp":"2021-04-19T18:05:58","rssi":"-98","motor":0,"rpm":459,"temp":15,"Ampere":2}},"_id":"zSAZNwTdgQeDOtBP"}
+{"id":3,"time":"20:7:18","data":{"id":2,"time":"20:7:17","data":{"timestamp":"2021-04-19T18:07:17","rssi":"-97","motor":0,"rpm":459,"temp":15,"Ampere":3}},"_id":"lMNtxdxNCFPJYq8t"}
+{"id":4,"time":"20:8:18","data":{"id":3,"time":"20:8:17","data":{"timestamp":"2021-04-19T18:08:17","rssi":"-98","motor":0,"rpm":459,"temp":15,"Ampere":4}},"_id":"aFb0Xh055ZcU6e70"}
