@@ -13,17 +13,7 @@ getID();
 const client = require("mqtt").connect("mqtt://broker.hivemq.com");
 let currentState = {};
 
-/* ---------- GLOBAL ROUTES ---------- */
-// define the home page route
-router.get("/", (req, res) => {
-  res.send("<h1>API</h1>");
-});
-
-// define the about route
-router.get("/about", (req, res) => {
-  res.send("<h1>About our API</h1>");
-});
-
+/* ---------- GLOBAL API ROUTES ---------- */
 router.get("/currentState", (req, res) => {
   let reply = {
     Status: "Succes",
@@ -34,16 +24,16 @@ router.get("/currentState", (req, res) => {
 
 /* ---------- DATABASE ROUTES ---------- */
 // define the home page route
-router.get("/database/", (req, res) => {
+router.get("/database", (req, res) => {
   res.send("<h1>Database | use(/about) to get more info!</h1>");
 });
 
 // define the about route
-router.get("database/about", (req, res) => {
+router.get("/database/about", (req, res) => {
   res.send("<h1>About database</h1>");
 });
 
-router.get("database/delete/all", (req, res) => {
+router.get("/database/delete/all", (req, res) => {
   db.remove({}, { multi: true }, (err, numRemoved) => {
     let reply = {
       Status: "Succes",
@@ -56,7 +46,7 @@ router.get("database/delete/all", (req, res) => {
   getID();
 });
 
-router.get("database/ID", (req, res) => {
+router.get("/database/ID", (req, res) => {
   let reply = {
     Status: "Succes",
     res: {
@@ -67,7 +57,7 @@ router.get("database/ID", (req, res) => {
   res.send(reply);
 });
 
-router.get("database/insert/:val", (req, res) => {
+router.get("/database/insert/:val", (req, res) => {
   let date = new Date();
   ID += 1;
   let doc = {
@@ -83,7 +73,7 @@ router.get("database/insert/:val", (req, res) => {
 });
 
 //changed res from newDocs to docs and console.log from newDocs to docs
-router.get("database/find/all", (req, res) => {
+router.get("/database/find/all", (req, res) => {
   db.find({}, function (err, docs) {
     docs.sort(function (a, b) {
       return a.id - b.id;
@@ -96,7 +86,7 @@ router.get("database/find/all", (req, res) => {
   });
 });
 
-router.get("database/find/latest/:i", (req, res) => {
+router.get("/database/find/latest/:i", (req, res) => {
   let i = req.params.i;
 
   if (i > ID)
