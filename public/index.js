@@ -105,7 +105,7 @@ const operators = {
         borderColor: RPMcolor,
         data: [],
         borderWidth: 2,
-        lineTension: 0,
+        lineTension: 0.3,
       },
       {
         fill: false,
@@ -113,7 +113,7 @@ const operators = {
         borderColor: TEMPcolor,
         data: [],
         borderWidth: 2,
-        lineTension: 0,
+        lineTension: 0.3,
       },
     ],
   },
@@ -126,6 +126,10 @@ const operators = {
 var Chart = new Chart(ctx, operators);
 
 function setChart() {
+  LABELS = [];
+  rpmDATA = [];
+  tempDATA = [];
+
   for (let i = 0; i < datavar.length; i++) {
     LABELS.push(datavar[i].time);
     rpmDATA.push(datavar[i].data.rpm);
@@ -139,10 +143,60 @@ function setChart() {
 }
 
 async function api() {
-  const res = await fetch("/api/database/find/latest/50");
+  const res = await fetch("/api/database/find/latest/30");
   const json = await res.json();
   datavar = await json.res;
   setChart();
 }
 
 api();
+
+const gaugeElement = document.querySelector(".gauge");
+const gaugeElement2 = document.querySelector(".gauge2");
+
+function setGaugeValue(gauge, value, min, max, unit, i) {
+  if (value < min || value > max) {
+    return;
+  }
+  gauge.querySelector(`.gauge__fill${i}`).style.transform = `rotate(${
+    value / (2 * max)
+  }turn)`;
+  gauge.querySelector(`.gauge__cover${i}`).textContent = `${
+    value + " " + unit
+  }`;
+  if (unit === "°C") {
+    if (value > 30) {
+      gauge.querySelector(`.gauge__fill${i}`).style.backgroundColor = "#f12b28";
+    } else {
+      gauge.querySelector(`.gauge__fill${i}`).style.backgroundColor = "blue";
+    }
+  }
+}
+
+async function apiReqG() {
+  const res = await fetch("/api/currentState");
+  const json = await res.json();
+  setGaugeValue(
+    gaugeElement,
+    json.res.state.temp == undefined ? 0 : json.res.state.temp,
+    0,
+    100,
+    "°C",
+    ""
+  );
+  setGaugeValue(
+    gaugeElement2,
+    json.res.state.rpm == undefined ? 0 : json.res.state.rpm,
+    0,
+    3000,
+    "RPM",
+    "2"
+  );
+}
+
+apiReqG();
+
+setInterval(() => {
+  api();
+  apiReqG();
+}, 5 * 1000);
