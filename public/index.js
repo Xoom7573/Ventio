@@ -199,4 +199,4 @@ apiReqG();
 setInterval(() => {
   api();
   apiReqG();
-}, 5 * 1000);
+}, 1000);
