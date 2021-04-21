@@ -200,7 +200,7 @@ function saveState() {
 }
 
 /* ---------- CUSTOM ACTIONS ---------- */
-setInterval(saveState, 10 * 1000);
+setInterval(saveState, 6000);
 
 //setInterval(() => console.log(currentState), 1000);
 

@@ -1,35 +1,129 @@
-// chartjs library => 'https://cdn.jsdelivr.net/npm/chart.js'
-const myChart = document.getElementById("myMultiChart").getContext("2d");
-const datum = new Date();
+const primaryColor = "#4834d4";
+const warningColor = "#f0932b";
+const RPMcolor = "#2c6fdb";
+const TEMPcolor = "#eb4d4b";
+
+const themeCookieName = "theme";
+const themeDark = "dark";
+const themeLight = "light";
+
+const body = document.getElementsByTagName("body")[0];
+
+function setCookie(cname, cvalue, exdays) {
+  var d = new Date();
+  d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
+  var expires = "expires=" + d.toUTCString();
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+  var name = cname + "=";
+  var ca = document.cookie.split(";");
+  for (var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == " ") {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+loadTheme();
+
+function loadTheme() {
+  var theme = getCookie(themeCookieName);
+  body.classList.add(theme === "" ? themeLight : theme);
+}
+
+function switchTheme() {
+  if (body.classList.contains(themeLight)) {
+    body.classList.remove(themeLight);
+    body.classList.add(themeDark);
+    setCookie(themeCookieName, themeDark);
+  } else {
+    body.classList.remove(themeDark);
+    body.classList.add(themeLight);
+    setCookie(themeCookieName, themeLight);
+  }
+}
+
+function collapseSidebar() {
+  body.classList.toggle("sidebar-expand");
+}
+
+window.onclick = function (event) {
+  openCloseDropdown(event);
+};
+
+function closeAllDropdown() {
+  var dropdowns = document.getElementsByClassName("dropdown-expand");
+  for (var i = 0; i < dropdowns.length; i++) {
+    dropdowns[i].classList.remove("dropdown-expand");
+  }
+}
+
+function openCloseDropdown(event) {
+  if (!event.target.matches(".dropdown-toggle")) {
+    //
+    // Close dropdown when click out of dropdown menu
+    //
+    closeAllDropdown();
+  } else {
+    var toggle = event.target.dataset.toggle;
+    var content = document.getElementById(toggle);
+    if (content.classList.contains("dropdown-expand")) {
+      closeAllDropdown();
+    } else {
+      closeAllDropdown();
+      content.classList.add("dropdown-expand");
+    }
+  }
+}
+
+var ctx = document.getElementById("myChart");
+ctx.height = 500;
+ctx.width = 500;
+var data = {};
+
 let datavar = [];
 
 let LABELS = [];
 let rpmDATA = [];
 let tempDATA = [];
 
-let operators = {
+const operators = {
   type: "line",
   data: {
     labels: [],
     datasets: [
       {
+        fill: false,
         label: "RPM",
+        borderColor: RPMcolor,
         data: [],
-        borderColor: ["#2E84D5"],
-        tension: 0.1,
+        borderWidth: 2,
+        lineTension: 0,
       },
       {
-        label: "temperature",
+        fill: false,
+        label: "TEMP",
+        borderColor: TEMPcolor,
         data: [],
-        borderColor: ["#D3193E"],
-        tension: 0.1,
+        borderWidth: 2,
+        lineTension: 0,
       },
     ],
   },
   options: {
-    responsive: true,
+    maintainAspectRatio: false,
+    bezierCurve: false,
   },
 };
+
+var Chart = new Chart(ctx, operators);
 
 function setChart() {
   for (let i = 0; i < datavar.length; i++) {
@@ -41,16 +135,14 @@ function setChart() {
   operators.data.labels = LABELS;
   operators.data.datasets[0].data = rpmDATA;
   operators.data.datasets[1].data = tempDATA;
-  massPopChart.update();
+  Chart.update();
 }
 
 async function api() {
-  const res = await fetch("/api/database/find/latest/5");
+  const res = await fetch("/api/database/find/latest/50");
   const json = await res.json();
   datavar = await json.res;
   setChart();
 }
 
 api();
-
-let massPopChart = new Chart(myChart, operators);
