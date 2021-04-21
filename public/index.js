@@ -1,7 +1,11 @@
-// const library = 'https://cdn.jsdelivr.net/npm/chart.js'
-
+// chartjs library => 'https://cdn.jsdelivr.net/npm/chart.js'
+const myChart = document.getElementById("myMultiChart").getContext("2d");
 const datum = new Date();
 let datavar = [];
+
+let LABELS = [];
+let rpmDATA = [];
+let tempDATA = [];
 
 let operators = {
   type: "line",
@@ -27,28 +31,26 @@ let operators = {
   },
 };
 
-fetch("/api/database/find/latest/30")
-  .then((response) => response.json())
-  .then((data) => {
-    datavar = data.res;
-    let labels = [];
-    let rpmDATA = [];
-    let tempDATA = [];
-    for (let i = 0; i < datavar.length; i++) {
-      labels.push(datavar[i].time);
-      rpmDATA.push(datavar[i].data.rpm);
-      tempDATA.push(datavar[i].data.temp);
-    }
-    operators.labels = labels;
-    operators.data[0].data = rpmDATA;
-    operators.data[1].data = tempDATA;
-  });
+function setChart() {
+  for (let i = 0; i < datavar.length; i++) {
+    LABELS.push(datavar[i].time);
+    rpmDATA.push(datavar[i].data.rpm);
+    tempDATA.push(datavar[i].data.temp);
+  }
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  operators.data.labels = LABELS;
+  operators.data.datasets[0].data = rpmDATA;
+  operators.data.datasets[1].data = tempDATA;
+  massPopChart.update();
 }
 
-sleep(1000);
+async function api() {
+  const res = await fetch("/api/database/find/latest/5");
+  const json = await res.json();
+  datavar = await json.res;
+  setChart();
+}
 
-let myChart = document.getElementById("myMultiChart").getContext("2d");
+api();
+
 let massPopChart = new Chart(myChart, operators);

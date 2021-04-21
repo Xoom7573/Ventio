@@ -180,6 +180,7 @@ function getLatest(t) {
   }
   return arr;
 }
+
 //{"id":24,"time":"21:36:44","data":{"id":23,"time":"21:36:38","data":{"timestamp":"2021-04-19T19:36:37","rssi":"-114","motor":0,"rpm":459,"temp":15,"Ampere":5}},"_id":"aISxlJ8vVwanqg9o"}
 function saveState() {
   if (currentState.motor != undefined) {
