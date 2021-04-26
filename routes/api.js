@@ -114,16 +114,16 @@ router.get("/database/find/latest/:i", (req, res) => {
 
 /* ---------- MQTT ROUTES ---------- */
 // define the home page route
-router.get("mqtt/", (req, res) => {
+router.get("/mqtt", (req, res) => {
   res.send("<h1>MQTT | use(/about) to get more info!</h1>");
 });
 
 // define the about route
-router.get("mqtt/about", (req, res) => {
+router.get("/mqtt/about", (req, res) => {
   res.send("<h1>About MQTT</h1>");
 });
 
-router.get("mqtt/send/:topic/:msg", (req, res) => {
+router.get("/mqtt/send/:topic/:msg", (req, res) => {
   let tpc = req.params.topic;
   let msg = req.params.msg;
 
@@ -132,14 +132,14 @@ router.get("mqtt/send/:topic/:msg", (req, res) => {
   res.send(reply);
 });
 
-router.get("mqtt/chat/:msg", (req, res) => {
+router.get("/mqtt/chat/:msg", (req, res) => {
   let msg = req.params.msg;
   client.publish(`dragino-1e9d94/chat`, msg);
   let reply = { status: "succes", message: msg };
   res.send(reply);
 });
 
-router.get("mqtt/sendCMD/:msg", (req, res) => {
+router.get("/mqtt/sendCMD/:msg", (req, res) => {
   let msg = req.params.msg;
   client.publish(`dragino-1e9d94/cmd`, msg);
   let reply = { status: "succes", topic: "dragino-1e9d94/cmd", message: msg };
