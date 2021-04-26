@@ -222,7 +222,53 @@
         <div class="col-12 col-m-12 col-sm-12">
           <div class="card">
             <div class="card-header">
-              <h3>Chart | RPM & TEMP</h3>
+              <h3>Controls</h3>
+            </div>
+            <div class="card-content">
+              <div class="controls">
+                <div class="controlButtons">
+                  <div class="switchMotorOnOff">
+                    <label class="switchMotor">
+                      <input id="motorOnOffBtn" type="checkbox" />
+                      <span></span>
+                    </label>
+                    <h4>Motor</h4>
+                  </div>
+                  <div class="switchMotorOnOff">
+                    <label class="switchMotor">
+                      <input id="autoRefreshBtn" type="checkbox" />
+                      <span></span>
+                    </label>
+                    <h4>Auto Refresh</h4>
+                  </div>
+                </div>
+                <div class="controlSliders">
+                  <div class="instelWaardeMotor">
+                    <div class="range-wrap">
+                      <input
+                        type="range"
+                        class="range"
+                        value="15"
+                        min="0"
+                        max="30"
+                      />
+                      <output class="bubble"></output>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-m-12 col-sm-12">
+          <div class="card">
+            <div class="card-header">
+              <div class="special-card-header">
+                <h3>Chart | RPM & TEMP</h3>
+                <input id="dataFetchNumber" value="10" type="number" />
+              </div>
             </div>
             <div class="card-content">
               <canvas id="myChart"></canvas>

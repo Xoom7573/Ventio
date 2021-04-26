@@ -82,6 +82,45 @@ function openCloseDropdown(event) {
     }
   }
 }
+// CONTROLS
+// SLIDER
+const allRanges = document.querySelectorAll(".range-wrap");
+allRanges.forEach((wrap) => {
+  const range = wrap.querySelector(".range");
+  const bubble = wrap.querySelector(".bubble");
+
+  range.addEventListener("input", () => {
+    setBubble(range, bubble);
+  });
+
+  // setting bubble on DOM load
+  setBubble(range, bubble);
+});
+
+function setBubble(range, bubble) {
+  const val = range.value;
+
+  const min = range.min || 0;
+  const max = range.max || 100;
+
+  //const offset = Number(((val - min) * 100) / (max - min));
+  const offset = Number(((val - min) * 100) / (max - min));
+
+  bubble.textContent = val;
+
+  // yes, 14px is a magic number
+  bubble.style.left = `calc(${offset}% - 14px)`;
+}
+
+/* amount of data that has to be fetched! */
+let amountDataFetchDOM = document.getElementById("dataFetchNumber");
+let amountDataFetch = 10;
+
+amountDataFetchDOM.addEventListener("input", () => {
+  amountDataFetch = amountDataFetchDOM.value;
+});
+
+/* CHART */
 
 var ctx = document.getElementById("myChart");
 ctx.height = 500;
@@ -143,13 +182,11 @@ function setChart() {
 }
 
 async function api() {
-  const res = await fetch("/api/database/find/latest/30");
+  const res = await fetch(`/api/database/find/latest/${amountDataFetch}`);
   const json = await res.json();
   datavar = await json.res;
   setChart();
 }
-
-api();
 
 const gaugeElement = document.querySelector(".gauge");
 const gaugeElement2 = document.querySelector(".gauge2");
@@ -193,10 +230,32 @@ async function apiReqG() {
     "2"
   );
 }
+/* Motor On-Off Handler */
+let motorBtnDOM = document.getElementById("motorOnOffBtn");
 
+motorBtnDOM.addEventListener("click", async () => {
+  let newMotorState = motorBtnDOM.checked;
+  if (newMotorState === true) {
+    let resA = await fetch(`/api/mqtt/sendCMD/A`);
+  } else {
+    let resB = await fetch(`/api/mqtt/sendCMD/B`);
+  }
+});
+
+/* Auto refresh handler */
+let autoRefreshButtonDOM = document.getElementById("autoRefreshBtn");
+let autoRefreshBtnState = autoRefreshButtonDOM.checked;
+
+autoRefreshButtonDOM.addEventListener("click", () => {
+  autoRefreshBtnState = autoRefreshButtonDOM.checked;
+});
+
+api();
 apiReqG();
 
 setInterval(() => {
-  api();
-  apiReqG();
+  if (autoRefreshBtnState === true) {
+    api();
+    apiReqG();
+  }
 }, 1000);
