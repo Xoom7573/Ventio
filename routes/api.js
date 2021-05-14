@@ -14,6 +14,12 @@ const client = require("mqtt").connect("mqtt://broker.hivemq.com");
 let currentState = {};
 
 /* ---------- GLOBAL API ROUTES ---------- */
+
+// define the home page route
+router.get("/", (req, res) => {
+  res.send("<h1>API | GIP 6TEA | BO - JELLE - BEN-JAMIN</h1>");
+});
+
 router.get("/currentState", (req, res) => {
   let date = new Date();
   let reply = {
@@ -147,7 +153,7 @@ router.get("/mqtt/sendCMD/:msg", (req, res) => {
 });
 
 /* ---------- MQTT LIBRARY FUNCTIONS ---------- */
-client.on("connect", (e) => {
+client.on("connect", e => {
   client.subscribe("dragino-1e9d94/#");
 });
 
@@ -156,6 +162,7 @@ client.on("message", (topic, message) => {
   if (topic === "dragino-1e9d94/LoraModule") {
     let s = msg.slice(1, -1);
     currentState = JSON.parse(s);
+  } else if (topic === "dragino-1e9d94/cmd") {
   } else {
     console.log(`Received msg: ${msg} from ${topic}`);
   }
@@ -165,7 +172,7 @@ client.on("message", (topic, message) => {
 function getID() {
   db.find({}, (err, data) => {
     let arrID = [-1];
-    data.map((element) => {
+    data.map(element => {
       arrID.push(element.id);
     });
     ID = Math.max.apply(null, arrID);

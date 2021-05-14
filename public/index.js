@@ -7,7 +7,48 @@ const themeCookieName = "theme";
 const themeDark = "dark";
 const themeLight = "light";
 
+var socket = io("http://localhost:5000");
 const body = document.getElementsByTagName("body")[0];
+
+var amountDataFetchDOM = document.getElementById("dataFetchNumber");
+var amountDataFetch = 10;
+
+var range = document.querySelector(".range");
+var bubble = document.querySelector(".bubble");
+
+var autoRefreshButtonDOM = document.getElementById("autoRefreshBtn");
+var autoRefreshBtnState = autoRefreshButtonDOM.checked;
+
+var motorBtnDOM = document.getElementById("motorOnOffBtn");
+var newMotorState = motorBtnDOM.checked;
+
+var State = {
+  motor: false,
+  autoRefresh: false,
+  iTemp: "0",
+  fetchAmount: "0",
+};
+
+function setCurrentState() {
+  newMotorState = State.motor;
+  motorBtnDOM.checked = State.motor;
+
+  autoRefreshBtnState = State.autoRefresh;
+  autoRefreshButtonDOM.checked = State.autoRefresh;
+
+  amountDataFetch = State.fetchAmount;
+  amountDataFetchDOM.value = State.fetchAmount;
+
+  instelbareTemp = State.iTemp;
+  range.value = State.iTemp;
+  setBubble(range, bubble);
+}
+
+socket.on("StateToClient", state => {
+  console.log(state);
+  State = state;
+  setCurrentState();
+});
 
 function setCookie(cname, cvalue, exdays) {
   var d = new Date();
@@ -84,18 +125,18 @@ function openCloseDropdown(event) {
 }
 // CONTROLS
 // SLIDER
-const allRanges = document.querySelectorAll(".range-wrap");
-allRanges.forEach((wrap) => {
-  const range = wrap.querySelector(".range");
-  const bubble = wrap.querySelector(".bubble");
 
-  range.addEventListener("input", () => {
-    setBubble(range, bubble);
-  });
+var instelbareTemp = range.value;
 
-  // setting bubble on DOM load
+range.addEventListener("input", () => {
   setBubble(range, bubble);
+  instelbareTemp = range.value;
+  State.iTemp = instelbareTemp;
+  socket.emit("StateToServer", State);
 });
+
+// setting bubble on DOM load
+setBubble(range, bubble);
 
 function setBubble(range, bubble) {
   const val = range.value;
@@ -113,11 +154,10 @@ function setBubble(range, bubble) {
 }
 
 /* amount of data that has to be fetched! */
-let amountDataFetchDOM = document.getElementById("dataFetchNumber");
-let amountDataFetch = 10;
-
 amountDataFetchDOM.addEventListener("input", () => {
   amountDataFetch = amountDataFetchDOM.value;
+  State.fetchAmount = amountDataFetch;
+  socket.emit("StateToServer", State);
 });
 
 /* CHART */
@@ -181,7 +221,7 @@ function setChart() {
   Chart.update();
 }
 
-async function api() {
+async function apiReqChartData() {
   const res = await fetch(`/api/database/find/latest/${amountDataFetch}`);
   const json = await res.json();
   datavar = await json.res;
@@ -210,7 +250,7 @@ function setGaugeValue(gauge, value, min, max, unit, i) {
   }
 }
 
-async function apiReqG() {
+async function apiReqGauge() {
   const res = await fetch("/api/currentState");
   const json = await res.json();
   setGaugeValue(
@@ -231,31 +271,25 @@ async function apiReqG() {
   );
 }
 /* Motor On-Off Handler */
-let motorBtnDOM = document.getElementById("motorOnOffBtn");
-
 motorBtnDOM.addEventListener("click", async () => {
-  let newMotorState = motorBtnDOM.checked;
-  if (newMotorState === true) {
-    let resA = await fetch(`/api/mqtt/sendCMD/A`);
-  } else {
-    let resB = await fetch(`/api/mqtt/sendCMD/B`);
-  }
+  newMotorState = motorBtnDOM.checked;
+  State.motor = newMotorState;
+  socket.emit("StateToServer", State);
 });
 
 /* Auto refresh handler */
-let autoRefreshButtonDOM = document.getElementById("autoRefreshBtn");
-let autoRefreshBtnState = autoRefreshButtonDOM.checked;
-
 autoRefreshButtonDOM.addEventListener("click", () => {
   autoRefreshBtnState = autoRefreshButtonDOM.checked;
+  State.autoRefresh = autoRefreshBtnState;
+  socket.emit("StateToServer", State);
 });
 
-api();
-apiReqG();
+apiReqChartData();
+apiReqGauge();
 
 setInterval(() => {
   if (autoRefreshBtnState === true) {
-    api();
-    apiReqG();
+    apiReqChartData();
+    apiReqGauge();
   }
 }, 1000);

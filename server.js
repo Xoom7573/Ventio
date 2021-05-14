@@ -1,5 +1,7 @@
 // EXPRESS | REST API
 const express = require("express");
+const socket = require("socket.io");
+const MQTT_client = require("mqtt").connect("mqtt://broker.hivemq.com");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -10,14 +12,19 @@ const databaseRouter = require("./routes/api");
 const AUTH_KEY = "SECRETBOJELLEBENJIGIP6TEA";
 let AUTH = true;
 
-app.listen(PORT, () => console.log(`Server is listening on port ${PORT}...`));
+// State handler
+var State = {
+  motor: false,
+  autoRefresh: false,
+  iTemp: "20",
+  fetchAmount: "15",
+};
+
+const server = app.listen(PORT, () =>
+  console.log(`Server is listening on port ${PORT}...`)
+);
 
 app.use(express.json());
-
-// define the home page route
-app.get("/", (req, res) => {
-  res.send("<h1>API | GIP 6TEA | BO - JELLE - BEN-JAMIN</h1>");
-});
 
 // define the about route
 app.get("/about", (req, res) => {
@@ -52,4 +59,33 @@ app.use((req, res, next) => {
 });
 
 app.use("/api", databaseRouter);
-app.use("/public", express.static("public"));
+app.use(express.static("public"));
+
+/* -- SOCKET.IO SETUP -- */
+const io = socket(server);
+
+/* -- SOCKET FUNCTIONALITY -- */
+io.on("connection", socket => {
+  console.log("connection: ", socket.id);
+
+  io.sockets.emit("StateToClient", State);
+
+  socket.on("StateToServer", state => {
+    State = state;
+    io.sockets.emit("StateToClient", State);
+  });
+});
+
+/* -- CUSTOM FUNCTIONS -- */
+function msgToLoraC() {
+  MQTT_client.publish("dragino-1e9d94/cmd", `C${State.iTemp}`);
+}
+
+function msgToLora() {
+  State.motor
+    ? MQTT_client.publish("dragino-1e9d94/cmd", "A")
+    : MQTT_client.publish("dragino-1e9d94/cmd", "B");
+  setTimeout(msgToLoraC, 1500);
+}
+
+setInterval(msgToLora, 3000);
