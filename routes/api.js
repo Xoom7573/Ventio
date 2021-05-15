@@ -13,9 +13,39 @@ const client = require("mqtt").connect("mqtt://broker.hivemq.com");
 let currentState = {};
 
 /* ---------- GLOBAL API ROUTES ---------- */
-// Define the home page route of our api (on ventio.xyz/api)
+// Define the home page route of our api (on ventio.xyz/api).
 router.get("/", (req, res) => {
-  res.send("<h1>API | GIP 6TEA | BO - JELLE - BEN-JAMIN</h1>");
+  res.send(
+    "<h1>API | GIP 6TEA | BO - JELLE - BEN-JAMIN</h1>\n" +
+      "<h2>Go to www.ventio.xyz/api/about</h2>\n" +
+      "<h3>To learn more about our api</h3>"
+  );
+});
+
+// Define the about page route of our api (on ventio.xyz/api/about).
+router.get("/about", (req, res) => {
+  res.send(
+    "<h1>Our Public Routes!</h1>\n" +
+      "<h3>Global Routes:</h3>\n" +
+      `<a href="/api/currentState"><h4>www.ventio.xyz/api/currentState</h4></a>\n` +
+      "<h4>-----------------------------</h4>\n" +
+      "<h3>Database Routes:</h3>\n" +
+      `<a href="/api/database"><h4>www.ventio.xyz/api/database</h4></a>\n` +
+      `<a href="/api/database/about"><h4>www.ventio.xyz/api/database/about</h4></a>\n` +
+      `<a href="/api/database/delete/all"><h4>www.ventio.xyz/api/database/delete/all</h4></a>\n` +
+      `<a href="/api/database/ID"><h4>www.ventio.xyz/api/database/ID</h4></a>\n` +
+      `<a href="/api"><h4>www.ventio.xyz/api/database/insert/{number} : check this one</h4></a>\n` +
+      `<a href="/api/database/find/all"><h4>www.ventio.xyz/api/database/find/all</h4></a>\n` +
+      `<a href="/api/database/find/latest/1"><h4>www.ventio.xyz/api/database/find/latest/{number}</h4></a>\n` +
+      "<h4>-----------------------------</h4>\n" +
+      "<h3>MQTT Routes:</h3>\n" +
+      `<a href="/api/mqtt"><h4>www.ventio.xyz/api/mqtt</h4></a>\n` +
+      `<a href="/api/mqtt/about"><h4>www.ventio.xyz/api/mqtt/about</h4></a>\n` +
+      `<a href="/api/mqtt/send/ExampleTopic/HelloWorld"><h4>www.ventio.xyz/api/mqtt/send/{your topic}/{your message}</h4></a>\n` +
+      `<a href="/api/mqtt/chat/HelloWorld"><h4>www.ventio.xyz/api/mqtt/chat/{your message}</h4></a>\n` +
+      `<a href="/api/mqtt/sendCMD/ExampleCommand"><h4>www.ventio.xyz/api/mqtt/sendCMD/{your command}</h4></a>\n` +
+      "<h4>-----------------------------</h4>\n"
+  );
 });
 
 // Defines the api route that returns the currentstate of our project!
@@ -35,12 +65,25 @@ router.get("/currentState", (req, res) => {
 /* ---------- DATABASE ROUTES ---------- */
 // Defines the home page route.
 router.get("/database", (req, res) => {
-  res.send("<h1>Database | use(/about) to get more info!</h1>");
+  res.send(
+    "<h1>DATABASE</h1>\n" +
+      "<h3>use(/about) to get more info!</h3>\n" +
+      `<a href="/api/database/about"><h4>www.ventio.xyz/api/database/about</h4></a>\n`
+  );
 });
 
 // Defines the about route.
 router.get("/database/about", (req, res) => {
-  res.send("<h1>About database</h1>");
+  res.send(
+    "<h1>About database</h1>\n" +
+      "<h3>Database Routes:</h3>\n" +
+      `<a href="/api/database"><h4>www.ventio.xyz/api/database</h4></a>\n` +
+      `<a href="/api/database/delete/all"><h4>www.ventio.xyz/api/database/delete/all</h4></a>\n` +
+      `<a href="/api/database/ID"><h4>www.ventio.xyz/api/database/ID</h4></a>\n` +
+      `<a href="/api"><h4>www.ventio.xyz/api/database/insert/{number} : check this one</h4></a>\n` +
+      `<a href="/api/database/find/all"><h4>www.ventio.xyz/api/database/find/all</h4></a>\n` +
+      `<a href="/api/database/find/latest/1"><h4>www.ventio.xyz/api/database/find/latest/{number}</h4></a>\n`
+  );
 });
 
 // Defines the delete/all database route.
@@ -128,12 +171,23 @@ router.get("/database/find/latest/:i", (req, res) => {
 /* ---------- MQTT ROUTES ---------- */
 // Defines the home page route from mqtt.
 router.get("/mqtt", (req, res) => {
-  res.send("<h1>MQTT | use(/about) to get more info!</h1>");
+  res.send(
+    "<h1>MQTT</h1>\n" +
+      "<h3>use(/about) to get more info!</h3>\n" +
+      `<a href="/api/mqtt/about"><h4>www.ventio.xyz/api/mqtt/about</h4></a>\n`
+  );
 });
 
 // Defines the about route from mqtt.
 router.get("/mqtt/about", (req, res) => {
-  res.send("<h1>About MQTT</h1>");
+  res.send(
+    "<h1>About MQTT</h1>\n" +
+      "<h3>MQTT Routes:</h3>\n" +
+      `<a href="/api/mqtt"><h4>www.ventio.xyz/api/mqtt</h4></a>\n` +
+      `<a href="/api/mqtt/send/ExampleTopic/HelloWorld"><h4>www.ventio.xyz/api/mqtt/send/{your topic}/{your message}</h4></a>\n` +
+      `<a href="/api/mqtt/chat/HelloWorld"><h4>www.ventio.xyz/api/mqtt/chat/{your message}</h4></a>\n` +
+      `<a href="/api/mqtt/sendCMD/ExampleCommand"><h4>www.ventio.xyz/api/mqtt/sendCMD/{your command}</h4></a>\n`
+  );
 });
 
 // Defines the mqtt/send/{your chosen topic}/{your chosen message} route.
