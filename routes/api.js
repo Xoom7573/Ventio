@@ -17,8 +17,8 @@ let currentState = {};
 router.get("/", (req, res) => {
   res.send(
     "<h1>API | GIP 6TEA | BO - JELLE - BEN-JAMIN</h1>\n" +
-      "<h2>Go to www.ventio.xyz/api/about</h2>\n" +
-      "<h3>To learn more about our api</h3>"
+      "<h3>To learn more about our api use (/api/about)</h3>\n" +
+      `<a href="/api/about"><h4>www.ventio.xyz/api/about</h4></a>\n`
   );
 });
 
@@ -27,6 +27,8 @@ router.get("/about", (req, res) => {
   res.send(
     "<h1>Our Public Routes!</h1>\n" +
       "<h3>Global Routes:</h3>\n" +
+      `<a href="/"><h4>www.ventio.xyz</h4></a>\n` +
+      `<a href="/api"><h4>www.ventio.xyz/api</h4></a>\n` +
       `<a href="/api/currentState"><h4>www.ventio.xyz/api/currentState</h4></a>\n` +
       "<h4>-----------------------------</h4>\n" +
       "<h3>Database Routes:</h3>\n" +

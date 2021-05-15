@@ -31,7 +31,8 @@ app.use(express.json());
 // Define the about route
 app.get("/about", (req, res) => {
   res.send(
-    "<h1>About our API</h1>\n<h2>Go to /api : 'to see our home api page'</h2>\n<h2>Go to /api/about : 'to see all of our api routes'</h2>"
+    "<h1>About our webpage!</h1>\n" +
+      `<a href="/api"><h4>Go to /api : to see our home api page</h4></a>\n`
   );
 });
 
