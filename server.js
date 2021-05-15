@@ -20,21 +20,27 @@ var State = {
   fetchAmount: "15",
 };
 
+// Initialize our express app with the correct port!
 const server = app.listen(PORT, () =>
   console.log(`Server is listening on port ${PORT}...`)
 );
 
+// Enable json to be used in our backend api!
 app.use(express.json());
 
-// define the about route
+// Define the about route
 app.get("/about", (req, res) => {
-  res.send("<h1>About our API</h1>");
+  res.send(
+    "<h1>About our API\nGo to /api : 'to see our home api page'\nGo to /api/about : 'to see all of our api routes'</h1>"
+  );
 });
 
+// Info on how the login (simple security) works!
 app.get("/login", (req, res) => {
   res.send("<h1>Login/[SECRET KEY HERE TO ENABLE THE API]</h1>");
 });
 
+// The login route (u can provide a key to login), this will enable the home page!
 app.get("/login/:key", (req, res) => {
   if (AUTH === true) return res.send("<h1>You'r already logged in!</h1>");
   if (req.params.key === AUTH_KEY) {
@@ -46,19 +52,24 @@ app.get("/login/:key", (req, res) => {
   }
 });
 
+// Disable the authentication and the home page!
 app.get("/logout", (req, res) => {
   if (AUTH === false) return res.send("<h1>You'r already logged out!</h1>");
   AUTH = false;
   res.send("<h1>Succesfully logged out!</h1>");
 });
 
+// Check if you have been authorized!
 app.use((req, res, next) => {
   if (AUTH === true) {
     next();
   }
 });
 
+// Enable the api Router!
 app.use("/api", databaseRouter);
+
+// Enable our static pages so they can load when a user makes a request to '/'!
 app.use(express.static("public"));
 
 /* -- SOCKET.IO SETUP -- */

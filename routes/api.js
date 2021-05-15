@@ -1,25 +1,24 @@
-/* GLOBALS */
-// EXPRESS
+/* -- EXPRESS GLOBAL VARIABLES! -- */
 const express = require("express");
 const router = express.Router();
 
-// DATABASE
+/* -- DATABASE FEATURES! -- */
 const Datastore = require("nedb");
 const db = new Datastore({ filename: "database.db", autoload: true });
 let ID = 0;
 getID();
 
-// MQTT
+/** -- MQTT GLOBAL VARIABLES! -- */
 const client = require("mqtt").connect("mqtt://broker.hivemq.com");
 let currentState = {};
 
 /* ---------- GLOBAL API ROUTES ---------- */
-
-// define the home page route
+// Define the home page route of our api (on ventio.xyz/api)
 router.get("/", (req, res) => {
   res.send("<h1>API | GIP 6TEA | BO - JELLE - BEN-JAMIN</h1>");
 });
 
+// Defines the api route that returns the currentstate of our project!
 router.get("/currentState", (req, res) => {
   let date = new Date();
   let reply = {
@@ -34,16 +33,18 @@ router.get("/currentState", (req, res) => {
 });
 
 /* ---------- DATABASE ROUTES ---------- */
-// define the home page route
+// Defines the home page route.
 router.get("/database", (req, res) => {
   res.send("<h1>Database | use(/about) to get more info!</h1>");
 });
 
-// define the about route
+// Defines the about route.
 router.get("/database/about", (req, res) => {
   res.send("<h1>About database</h1>");
 });
 
+// Defines the delete/all database route.
+// With this you can delete all the samples of our database.
 router.get("/database/delete/all", (req, res) => {
   db.remove({}, { multi: true }, (err, numRemoved) => {
     let reply = {
@@ -57,6 +58,8 @@ router.get("/database/delete/all", (req, res) => {
   getID();
 });
 
+// Defines the database/ID route.
+// This will return current (latest ID/latest Sample added to the DB) and next ID from the database.
 router.get("/database/ID", (req, res) => {
   let reply = {
     Status: "Succes",
@@ -68,6 +71,7 @@ router.get("/database/ID", (req, res) => {
   res.send(reply);
 });
 
+//
 router.get("/database/insert/:val", (req, res) => {
   let date = new Date();
   ID += 1;
@@ -83,7 +87,8 @@ router.get("/database/insert/:val", (req, res) => {
   res.send({ Status: "Succes", Res: doc });
 });
 
-//changed res from newDocs to docs and console.log from newDocs to docs
+// Defines the database/find/all route.
+// This will return all the samples that are stored in my database.
 router.get("/database/find/all", (req, res) => {
   db.find({}, function (err, docs) {
     docs.sort(function (a, b) {
@@ -97,6 +102,8 @@ router.get("/database/find/all", (req, res) => {
   });
 });
 
+// Defines the database/find/latest/{number: ex->'10'} route.
+// With this route you can return a part of the latest data.
 router.get("/database/find/latest/:i", (req, res) => {
   let i = req.params.i;
 
@@ -119,16 +126,18 @@ router.get("/database/find/latest/:i", (req, res) => {
 });
 
 /* ---------- MQTT ROUTES ---------- */
-// define the home page route
+// Defines the home page route from mqtt.
 router.get("/mqtt", (req, res) => {
   res.send("<h1>MQTT | use(/about) to get more info!</h1>");
 });
 
-// define the about route
+// Defines the about route from mqtt.
 router.get("/mqtt/about", (req, res) => {
   res.send("<h1>About MQTT</h1>");
 });
 
+// Defines the mqtt/send/{your chosen topic}/{your chosen message} route.
+// With this u can send messages to a "custom topic" but it will always start with dragino-1e9d94/send/{your chosen topic}.
 router.get("/mqtt/send/:topic/:msg", (req, res) => {
   let tpc = req.params.topic;
   let msg = req.params.msg;
@@ -138,6 +147,8 @@ router.get("/mqtt/send/:topic/:msg", (req, res) => {
   res.send(reply);
 });
 
+// Defines the mqtt/chat/{your message} route.
+// With this u can send messages to the dragino-1e9d94/chat topic.
 router.get("/mqtt/chat/:msg", (req, res) => {
   let msg = req.params.msg;
   client.publish(`dragino-1e9d94/chat`, msg);
@@ -145,6 +156,8 @@ router.get("/mqtt/chat/:msg", (req, res) => {
   res.send(reply);
 });
 
+// Defines the mqtt/sendCMD/{your command} route.
+// With this u can send commands to the dragino-1e9d94/cmd topic, these will be received by our lora system.
 router.get("/mqtt/sendCMD/:msg", (req, res) => {
   let msg = req.params.msg;
   client.publish(`dragino-1e9d94/cmd`, msg);
@@ -153,22 +166,27 @@ router.get("/mqtt/sendCMD/:msg", (req, res) => {
 });
 
 /* ---------- MQTT LIBRARY FUNCTIONS ---------- */
+// Connect as a client!
 client.on("connect", e => {
   client.subscribe("dragino-1e9d94/#");
 });
 
+// message receive callback function!
 client.on("message", (topic, message) => {
   let msg = message.toString();
   if (topic === "dragino-1e9d94/LoraModule") {
     let s = msg.slice(1, -1);
     currentState = JSON.parse(s);
   } else if (topic === "dragino-1e9d94/cmd") {
+    // ignore these messages!
   } else {
+    // print out any other message that doesn't come from 1 of the routes above!
     console.log(`Received msg: ${msg} from ${topic}`);
   }
 });
 
 /* ---------- CUSTOM FUNCTIONS ---------- */
+// Gets the latest id from the database!
 function getID() {
   db.find({}, (err, data) => {
     let arrID = [-1];
@@ -180,6 +198,7 @@ function getID() {
   });
 }
 
+// A little utility fucntion to get the latest data out of my database!
 function getLatest(t) {
   let arr = [];
   for (let i = 0; i < t; i++) {
@@ -188,7 +207,7 @@ function getLatest(t) {
   return arr;
 }
 
-//{"id":24,"time":"21:36:44","data":{"id":23,"time":"21:36:38","data":{"timestamp":"2021-04-19T19:36:37","rssi":"-114","motor":0,"rpm":459,"temp":15,"Ampere":5}},"_id":"aISxlJ8vVwanqg9o"}
+// This will save a sample to the database!
 function saveState() {
   if (currentState.motor != undefined) {
     let date = new Date();
@@ -207,8 +226,9 @@ function saveState() {
 }
 
 /* ---------- CUSTOM ACTIONS ---------- */
+// This will save a sample every 10 seconds to my database!
 setInterval(saveState, 10 * 1000);
-
 //setInterval(() => console.log(currentState), 1000);
 
+// This will export my express router so it can be enabled in 'server.js'.
 module.exports = router;
