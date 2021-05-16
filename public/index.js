@@ -241,13 +241,22 @@ function setGaugeValue(gauge, value, min, max, unit, i) {
     value + " " + unit
   }`;
   if (unit === "°C") {
-    if (value > 30) {
+    if (value > 40) {
       gauge.querySelector(`.gauge__fill${i}`).style.backgroundColor = "#f12b28";
+    } else if (value > 30) {
+      gauge.querySelector(`.gauge__fill${i}`).style.backgroundColor = "#ff6500";
+    } else if (value > 20) {
+      gauge.querySelector(`.gauge__fill${i}`).style.backgroundColor = "#00cc51"; // groen:#00ff65 geel:#ffa500
+    } else if (value > 10) {
+      gauge.querySelector(`.gauge__fill${i}`).style.backgroundColor = "#009aff";
     } else {
       gauge.querySelector(`.gauge__fill${i}`).style.backgroundColor = "blue";
     }
   }
 }
+
+setGaugeValue(gaugeElement, 0, 0, 50, "°C", "");
+setGaugeValue(gaugeElement2, 0, 0, 3000, "RPM", "2");
 
 async function apiReqGauge() {
   const res = await fetch("/api/currentState");
@@ -256,7 +265,7 @@ async function apiReqGauge() {
     gaugeElement,
     json.res.state.temp == undefined ? 0 : json.res.state.temp.toFixed(2),
     0,
-    100,
+    50,
     "°C",
     ""
   );
@@ -287,8 +296,8 @@ apiReqChartData();
 apiReqGauge();
 
 setInterval(() => {
+  apiReqGauge();
   if (autoRefreshBtnState === true) {
     apiReqChartData();
-    apiReqGauge();
   }
 }, 1000);
