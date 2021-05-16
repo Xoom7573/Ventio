@@ -265,7 +265,7 @@ function getLatest(t) {
 
 // This will save a sample to the database!
 function saveState() {
-  if (currentState.motor != undefined) {
+  if (currentState.motor != undefined || currentState.temp != undefined) {
     let date = new Date();
     ID += 1;
     let doc = {

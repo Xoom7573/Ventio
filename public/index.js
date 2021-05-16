@@ -45,7 +45,6 @@ function setCurrentState() {
 }
 
 socket.on("StateToClient", state => {
-  console.log(state);
   State = state;
   setCurrentState();
 });
@@ -255,7 +254,7 @@ async function apiReqGauge() {
   const json = await res.json();
   setGaugeValue(
     gaugeElement,
-    json.res.state.temp == undefined ? 0 : json.res.state.temp,
+    json.res.state.temp == undefined ? 0 : json.res.state.temp.toFixed(2),
     0,
     100,
     "°C",
@@ -263,7 +262,7 @@ async function apiReqGauge() {
   );
   setGaugeValue(
     gaugeElement2,
-    json.res.state.rpm == undefined ? 0 : json.res.state.rpm,
+    json.res.state.rpm == undefined ? 0 : Math.round(json.res.state.rpm),
     0,
     3000,
     "RPM",
