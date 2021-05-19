@@ -254,7 +254,7 @@ function getID() {
   });
 }
 
-// A little utility fucntion to get the latest data out of my database!
+// A little utility function to get the latest data out of my database!
 function getLatest(t) {
   let arr = [];
   for (let i = 0; i < t; i++) {

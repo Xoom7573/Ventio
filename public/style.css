@@ -1,9 +1,4 @@
 :root {
-  --primary-color: #4834d4;
-  --success-color: #6ab04c;
-  --warning-color: #f0932b;
-  --danger-color: #eb4d4b;
-
   --light-color: #212529;
   --light-second-color: #727475;
   --light-background: #ffffff;
@@ -51,22 +46,6 @@
 .dark .logo-light,
 .dark .dark-icon {
   display: none;
-}
-
-.bg-primary {
-  background: var(--primary-color);
-}
-
-.bg-success {
-  background: var(--success-color);
-}
-
-.bg-warning {
-  background: var(--warning-color);
-}
-
-.bg-danger {
-  background: var(--danger-color);
 }
 
 * {
@@ -633,40 +612,6 @@ body {
   overflow-x: auto;
 }
 
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-table td {
-  border-top: 1px solid var(--second-bg-color);
-  padding: 15px;
-}
-
-table th {
-  border-top: 1px solid var(--second-bg-color);
-  border-bottom: 1px solid var(--second-bg-color);
-  padding: 15px 12px;
-  text-align: left;
-}
-
-.dot i {
-  display: inline-block;
-  width: 0.385rem;
-  height: 0.385rem;
-  margin-right: 0.385rem;
-  vertical-align: middle;
-  border-radius: 50%;
-}
-
-.progress-wrapper {
-  margin-bottom: 15px;
-}
-
-.float-right {
-  float: right;
-}
-
 .progress {
   height: 10px;
   overflow: hidden;
@@ -676,8 +621,6 @@ table th {
   border-radius: 0.25rem;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
-
-/* Custom styling */
 
 .gauge__center {
   display: inline-flex;
