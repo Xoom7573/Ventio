@@ -1,4 +1,5 @@
-// EXPRESS | REST API
+/* EXPRESS | REST API */
+// CONST VARS
 const express = require("express");
 const socket = require("socket.io");
 const MQTT_client = require("mqtt").connect("mqtt://broker.hivemq.com");
@@ -8,7 +9,7 @@ const PORT = process.env.PORT || 5000;
 // Route Handler
 const databaseRouter = require("./routes/api");
 
-// SIMPLE AUTH
+// Simple authentication
 const AUTH_KEY = "SECRETBOJELLEBENJIGIP6TEA";
 let AUTH = true;
 
@@ -25,10 +26,10 @@ const server = app.listen(PORT, () =>
   console.log(`Server is listening on port ${PORT}...`)
 );
 
-// Enable json to be used in our backend api!
+// Enable JSON to be used in our backend api!
 app.use(express.json());
 
-// Define the about route
+// Define the about route.
 app.get("/about", (req, res) => {
   res.send(
     "<h1>About our webpage!</h1>\n" +
@@ -36,7 +37,7 @@ app.get("/about", (req, res) => {
   );
 });
 
-// Info on how the login (simple security) works!
+// Info on how the login works! (simple security)
 app.get("/login", (req, res) => {
   res.send("<h1>Login/[SECRET KEY HERE TO ENABLE THE API]</h1>");
 });
@@ -53,7 +54,7 @@ app.get("/login/:key", (req, res) => {
   }
 });
 
-// Disable the authentication and the home page!
+// Disable the authentication (aka. the home page)!
 app.get("/logout", (req, res) => {
   if (AUTH === false) return res.send("<h1>You'r already logged out!</h1>");
   AUTH = false;
@@ -70,18 +71,22 @@ app.use((req, res, next) => {
 // Enable the api Router!
 app.use("/api", databaseRouter);
 
-// Enable our static pages so they can load when a user makes a request to '/'!
+// Enable our static website so they can load when a user makes a request to '/'!
 app.use(express.static("public"));
 
 /* -- SOCKET.IO SETUP -- */
 const io = socket(server);
 
 /* -- SOCKET FUNCTIONALITY -- */
+// Runs when a new connection is made!
 io.on("connection", socket => {
+  // Logs the id from the client that made a connection.
   console.log("connection: ", socket.id);
 
+  // Sends immediatly the Controls state back to the client.
   io.sockets.emit("StateToClient", State);
 
+  // Listens if there are changes happening to the control state from our website.
   socket.on("StateToServer", state => {
     State = state;
     io.sockets.emit("StateToClient", State);
@@ -89,15 +94,19 @@ io.on("connection", socket => {
 });
 
 /* -- CUSTOM FUNCTIONS -- */
+// This will send a set_temp to the MQTT broker!
 function msgToLoraC() {
   MQTT_client.publish("dragino-1e9d94/cmd", `C${State.iTemp}`);
 }
 
+// This will send a command to start and stop the motor to the MQTT broker!
 function msgToLora() {
   State.motor
     ? MQTT_client.publish("dragino-1e9d94/cmd", "A")
     : MQTT_client.publish("dragino-1e9d94/cmd", "B");
-  setTimeout(msgToLoraC, 1500);
+  // this will msgToLoraC run after a second
+  setTimeout(msgToLoraC, 1000);
 }
 
-setInterval(msgToLora, 3000);
+// Run every 2 seconds
+setInterval(msgToLora, 2000);

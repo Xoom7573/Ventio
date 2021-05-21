@@ -1,3 +1,4 @@
+/* -- GLOBAL VARS -- */
 const primaryColor = "#4834d4";
 const warningColor = "#f0932b";
 const RPMcolor = "#2c6fdb";
@@ -22,6 +23,7 @@ var autoRefreshBtnState = autoRefreshButtonDOM.checked;
 var motorBtnDOM = document.getElementById("motorOnOffBtn");
 var newMotorState = motorBtnDOM.checked;
 
+/* -- WEBSITE CONTROLS STATE -- */
 var State = {
   motor: false,
   autoRefresh: false,
@@ -29,6 +31,7 @@ var State = {
   fetchAmount: "0",
 };
 
+/* -- SETS CURRENTSTATE CORRECT -- */
 function setCurrentState() {
   newMotorState = State.motor;
   motorBtnDOM.checked = State.motor;
@@ -44,6 +47,7 @@ function setCurrentState() {
   setBubble(range, bubble);
 }
 
+/* -- CHECKS FOR MESSAGES FROM THE SOCKET SERVER -- */
 socket.on("StateToClient", state => {
   State = state;
   setCurrentState();
@@ -56,6 +60,7 @@ function setCookie(cname, cvalue, exdays) {
   document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
 
+/* -- COOKIE GETTING ALGORITHM -- */
 function getCookie(cname) {
   var name = cname + "=";
   var ca = document.cookie.split(";");
@@ -71,13 +76,14 @@ function getCookie(cname) {
   return "";
 }
 
+/* -- GETS THE THEME FROM THE COOKIE AND LOADS IT! -- */
 loadTheme();
-
 function loadTheme() {
   var theme = getCookie(themeCookieName);
   body.classList.add(theme === "" ? themeLight : theme);
 }
 
+/* -- SWITCHES THE THEME ON THE WEBSITE AND CHANGES THE COOKIE -- */
 function switchTheme() {
   if (body.classList.contains(themeLight)) {
     body.classList.remove(themeLight);
@@ -90,10 +96,12 @@ function switchTheme() {
   }
 }
 
+/* -- TO OPEN AND CLOSE THE BURGER MENU -- */
 function collapseSidebar() {
   body.classList.toggle("sidebar-expand");
 }
 
+/* -- OPENING MECHANISM FOR ALL DROPDOWNS -- */
 window.onclick = function (event) {
   openCloseDropdown(event);
 };
@@ -122,9 +130,8 @@ function openCloseDropdown(event) {
     }
   }
 }
-// CONTROLS
+/* ALL CONTROLS */
 // SLIDER
-
 var instelbareTemp = range.value;
 
 range.addEventListener("input", () => {
@@ -159,8 +166,8 @@ amountDataFetchDOM.addEventListener("input", () => {
   socket.emit("StateToServer", State);
 });
 
-/* CHART */
-
+/* -- CHART -- */
+// Vars
 var ctx = document.getElementById("myChart");
 ctx.height = 500;
 ctx.width = 500;
@@ -172,6 +179,7 @@ let LABELS = [];
 let rpmDATA = [];
 let tempDATA = [];
 
+// Chart options
 const operators = {
   type: "line",
   data: {
@@ -203,6 +211,7 @@ const operators = {
 
 var Chart = new Chart(ctx, operators);
 
+/* -- SETS THE CHART CORRECT -- */
 function setChart() {
   LABELS = [];
   rpmDATA = [];
@@ -220,6 +229,7 @@ function setChart() {
   Chart.update();
 }
 
+/* -- REQUESTS CHART DATA FROM API -- */
 async function apiReqChartData() {
   const res = await fetch(`/api/database/find/latest/${amountDataFetch}`);
   const json = await res.json();
@@ -227,9 +237,12 @@ async function apiReqChartData() {
   setChart();
 }
 
+/* -- GAUGES -- */
+// Vars
 const gaugeElement = document.querySelector(".gauge");
 const gaugeElement2 = document.querySelector(".gauge2");
 
+// Sets the gauges to there correct state!
 function setGaugeValue(gauge, value, min, max, unit, i) {
   if (value < min || value > max) {
     return;
@@ -258,6 +271,7 @@ function setGaugeValue(gauge, value, min, max, unit, i) {
 setGaugeValue(gaugeElement, 0, 0, 50, "°C", "");
 setGaugeValue(gaugeElement2, 0, 0, 3000, "RPM", "2");
 
+/* -- REQUESTS THE GAUGES DATA -- */
 async function apiReqGauge() {
   const res = await fetch("/api/currentState");
   const json = await res.json();
@@ -278,23 +292,26 @@ async function apiReqGauge() {
     "2"
   );
 }
-/* Motor On-Off Handler */
+
+/* -- MOTOR ON-OFF HANDLER -- */
 motorBtnDOM.addEventListener("click", async () => {
   newMotorState = motorBtnDOM.checked;
   State.motor = newMotorState;
   socket.emit("StateToServer", State);
 });
 
-/* Auto refresh handler */
+/* -- AUTO REFRESH HANDLER -- */
 autoRefreshButtonDOM.addEventListener("click", () => {
   autoRefreshBtnState = autoRefreshButtonDOM.checked;
   State.autoRefresh = autoRefreshBtnState;
   socket.emit("StateToServer", State);
 });
 
+/* -- RUN ONCE -- */
 apiReqChartData();
 apiReqGauge();
 
+/* -- RUN WITH AN INTERVAL OF 1SEC (A loop with delay of 1sec) -- */
 setInterval(() => {
   apiReqGauge();
   if (autoRefreshBtnState === true) {

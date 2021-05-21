@@ -8,7 +8,7 @@ const db = new Datastore({ filename: "database.db", autoload: true });
 let ID = 0;
 getID();
 
-/** -- MQTT GLOBAL VARIABLES! -- */
+/* -- MQTT GLOBAL VARIABLES! -- */
 const client = require("mqtt").connect("mqtt://broker.hivemq.com");
 let currentState = {};
 
@@ -227,12 +227,16 @@ client.on("connect", e => {
   client.subscribe("dragino-1e9d94/#");
 });
 
-// message receive callback function!
+// Message receive callback function!
 client.on("message", (topic, message) => {
   let msg = message.toString();
   if (topic === "dragino-1e9d94/LoraModule") {
+    // Slice and parse JSON data
     let s = msg.slice(1, -1);
     currentState = JSON.parse(s);
+    // Send back on different topics thingworx platform!
+    client.publish("dragino-1e9d94/thingworx/temperature", currentState.temp);
+    client.publish("dragino-1e9d94/thingworx/rpm", currentState.rpm);
   } else if (topic === "dragino-1e9d94/cmd") {
     // ignore these messages!
   } else {
@@ -265,7 +269,9 @@ function getLatest(t) {
 
 // This will save a sample to the database!
 function saveState() {
-  if (currentState.motor != undefined || currentState.temp != undefined) {
+  if (currentState.motor === undefined || currentState.temp === undefined) {
+    currentState = {};
+  } else {
     let date = new Date();
     ID += 1;
     let doc = {
@@ -276,15 +282,12 @@ function saveState() {
     db.insert(doc, (err, newDoc) => {
       console.log(newDoc);
     });
-  } else {
-    currentState = {};
   }
 }
 
 /* ---------- CUSTOM ACTIONS ---------- */
 // This will save a sample every 10 seconds to my database!
 setInterval(saveState, 10 * 1000);
-//setInterval(() => console.log(currentState), 1000);
 
 // This will export my express router so it can be enabled in 'server.js'.
 module.exports = router;
